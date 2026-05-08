@@ -9,7 +9,7 @@ A keyboard-driven Xray proxy client for the terminal. Built with [bubbletea](htt
 Download and extract the latest release from the [releases page](https://github.com/Keivan-sf/Bushuray-tui/releases), then move the folder to `/opt`:
 
 ```bash
-unzip bushuray-*.zip
+unzip *.zip
 sudo mv bushuray /opt/bushuray
 ```
 
