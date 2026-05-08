@@ -70,7 +70,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			s := msg.String()
 			commands := make([]tea.Cmd, len(m.inputs))
 
-			if s == "enter" && m.focusIndex == len(m.inputs) && m.inputs[0].Value() != "" && m.inputs[1].Value() != "" {
+			if s == "enter" && m.inputs[0].Value() != "" && m.inputs[1].Value() != "" {
 				servercmds.AddGroup(m.inputs[0].Value(), m.inputs[1].Value())
 				commands = append(commands, cmds.ExitAddProfileView)
 				m.reset()
