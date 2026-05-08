@@ -410,7 +410,7 @@ func (m Model) renderAppTitle() string {
 	primary := global.GetPrimaryColor()
 	title := lipgloss.NewStyle().Foreground(primary).Background(global.GetBgColor()).Render("Bushuray-tui")
 	sep := lipgloss.NewStyle().Foreground(primary).Background(global.GetBgColor()).Render(" • ")
-	ver := lipgloss.NewStyle().Foreground(primary).Background(global.GetBgColor()).Render("v0.1.8")
+	ver := lipgloss.NewStyle().Foreground(primary).Background(global.GetBgColor()).Render("v" + global.Version)
 	content := lipgloss.JoinHorizontal(lipgloss.Top, title, sep, ver)
 	return lipgloss.NewStyle().Width(m.Width).Height(3).MaxHeight(3).Padding(1, 0).Background(global.GetBgColor()).Align(lipgloss.Center).Render(content)
 }
