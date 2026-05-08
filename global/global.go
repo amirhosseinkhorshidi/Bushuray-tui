@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-const Version = "1.0.1"
+const Version = "1.0.2"
 
 var NoColor = lipgloss.NoColor{}
 var BgColor = lipgloss.Color("#020308")
