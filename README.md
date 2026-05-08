@@ -1,5 +1,7 @@
 ## Bushuray-tui
 
+![screenshot](./images/screenshot.png)
+
 A keyboard-driven Xray proxy client for the terminal. Built with [bubbletea](https://github.com/charmbracelet/bubbletea) and powered by [Bushuray-core](https://github.com/Keivan-sf/Bushuray-core).
 
 ## Installation
