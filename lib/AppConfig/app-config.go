@@ -16,6 +16,7 @@ type AppConfig struct {
 	CoreTCPPort   int       `json:"core-tcp-port"`
 	TestPortRange PortRange `json:"test-port-range"`
 	NoBackground  bool      `json:"no-background,omitzero"`
+	Theme         string    `json:"theme,omitzero"`
 }
 
 type PortRange struct {
@@ -54,6 +55,20 @@ func LoadConfig() {
 	}
 	application_configuration = config
 	is_config_loaded = true
+}
+
+func SaveTheme(themeName string) error {
+	application_configuration.Theme = themeName
+	home_dir, err := utils.GetHomeDir()
+	if err != nil {
+		return err
+	}
+	config_path := filepath.Join(home_dir, ".config", "bushuray", "config.json")
+	data, err := json.MarshalIndent(application_configuration, "", " ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(config_path, data, 0666)
 }
 
 func readConfig() (AppConfig, error) {

@@ -35,17 +35,17 @@ func InitialModel() Model {
 
 	var t textinput.Model
 	t = textinput.New()
-	t.Cursor.Style = cursorStyle.Background(global.GetBgColor())
+	t.Cursor.Style = cursorStyle().Background(global.GetBgColor())
 	t.CharLimit = 32
 	t.Placeholder = "Profile name"
 	t.Focus()
-	t.TextStyle = focusedStyle.Background(global.GetBgColor())
-	t.PromptStyle = focusedStyle.Background(global.GetBgColor())
-	t.Cursor.TextStyle = focusedStyle.Background(global.GetBgColor())
-	t.PlaceholderStyle = placeHolderStyle.Background(global.GetBgColor())
+	t.TextStyle = focusedStyle().Background(global.GetBgColor())
+	t.PromptStyle = focusedStyle().Background(global.GetBgColor())
+	t.Cursor.TextStyle = focusedStyle().Background(global.GetBgColor())
+	t.PlaceholderStyle = placeHolderStyle().Background(global.GetBgColor())
 	t.Width = 50
 	t.CharLimit = 20
-	t.Cursor.Style = cursorStyle.Background(global.GetBgColor())
+	t.Cursor.Style = cursorStyle().Background(global.GetBgColor())
 
 	m.inputs[0] = t
 

@@ -14,7 +14,6 @@ type ServerNotification interface {
 type ApplicationState struct {
 	Groups           []GroupWithProfiles `json:"groups"`
 	ConnectionStatus ProxyStatus         `json:"connection-status"`
-	TunStatus        bool                `json:"tun-status"`
 }
 
 func (a ApplicationState) IsNotification() {}
@@ -62,18 +61,6 @@ type GroupDeleted struct {
 }
 
 func (g GroupDeleted) IsNotification() {}
-
-type IsRootAnswer struct {
-	IsRoot bool
-}
-
-func (i IsRootAnswer) IsNotification() {}
-
-type TunStatus struct {
-	IsEnabled bool `json:"is_enabled"`
-}
-
-func (t TunStatus) IsNotification() {}
 
 type SubscriptionUpdated struct {
 	GroupId  int       `json:"group_id"`

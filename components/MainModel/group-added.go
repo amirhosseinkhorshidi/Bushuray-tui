@@ -1,31 +1,22 @@
 package mainmodel
 
 import (
-	list "github.com/Keivan-sf/Bushuray-tui/components/List"
-	tabs "github.com/Keivan-sf/Bushuray-tui/components/Tabs"
+	profilelist "github.com/Keivan-sf/Bushuray-tui/components/ProfileList"
+	servercmds "github.com/Keivan-sf/Bushuray-tui/lib/ServerCommands"
 	sharedtypes "github.com/Keivan-sf/Bushuray-tui/shared_types"
 
 	tea "github.com/charmbracelet/bubbletea"
-	zone "github.com/lrstanley/bubblezone"
 )
 
 func applyGroupAdded(msg sharedtypes.GroupAdded, m Model) (tea.Model, tea.Cmd) {
-	tabview := tabs.TabView{
-		Title: msg.Name,
-		Content: list.Model{
-			Id:      zone.NewPrefix(),
-			GroupId: msg.Id,
-			Primary: -1,
-			Items:   []list.ListItem{},
-		},
+	m.ProfileList.Groups = append(m.ProfileList.Groups, profilelist.GroupItem{
+		Id:   msg.Id,
+		Name: msg.Name,
+	})
+	m.ProfileList.ActiveGroupIdx = len(m.ProfileList.Groups) - 1
+	m.ProfileList.ResetCursor()
+	if msg.SubscriptionUrl != "" {
+		go servercmds.UpdateSubscription(msg.Id)
 	}
-
-	tid := findGroupTab(msg.Id, m)
-	if tid != -1 {
-		m.Tabs.Children[tid] = tabview
-	} else {
-		m.Tabs.Children = append(m.Tabs.Children, tabview)
-	}
-	m.Tabs = m.Tabs.SetWH(m.Tabs.Width, m.Tabs.Height)
 	return m, nil
 }

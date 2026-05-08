@@ -1,43 +1,104 @@
-<img width="1297" height="778" alt="image" src="https://github.com/user-attachments/assets/721fcb9b-08f0-475b-a164-48ed681710fa" />
-
-[![AUR](https://img.shields.io/aur/version/bushuray-git)](https://aur.archlinux.org/packages/bushuray-git)
-
 ## Bushuray-tui
-Bushuray-tui is a keyboard-driven Xray client built for your terminal. It uses [Bushuray-core](https://github.com/Keivan-sf/Bushuray-core) as its back-end and It's written in Go with [bubbletea](https://github.com/charmbracelet/bubbletea)
-### How to use
-Bushuray is currently available on AUR under the name of `bushuray-git`
 
-For other distrobutions download and extract the latest version from releases section then run
-```
-./bushuray
+A keyboard-driven Xray proxy client for the terminal. Built with [bubbletea](https://github.com/charmbracelet/bubbletea) and powered by [Bushuray-core](https://github.com/Keivan-sf/Bushuray-core).
+
+## Installation
+
+Download the latest release from the [releases page](https://github.com/Keivan-sf/Bushuray-tui/releases), then copy both binaries:
+
+```bash
+sudo cp bushuray /usr/local/bin/bushuray
+sudo cp bushuray-core /usr/local/bin/bushuray-core
 ```
 
-### Configuration
-Bushuray will create its configuration file in `~/.config/bushuray/config.json` with the following template:
+Then run from anywhere:
+
+```bash
+bushuray
+```
+
+`bushuray-core` is looked up in the following paths (in order):
+
+1. `./bushuray-core`
+2. `./bin/bushuray-core`
+3. `/usr/bin/bushuray-core`
+4. `/usr/local/bin/bushuray-core`
+
+## Keybindings
+
+| Key | Action |
+|---|---|
+| `enter` | Connect / disconnect |
+| `a` | Add subscription or proxy |
+| `t` | Test current proxy |
+| `T` | Test all proxies in subscription |
+| `U` | Update subscription |
+| `d` / `del` | Delete proxy |
+| `D` | Delete subscription |
+| `C` | Change theme |
+| `↑↓` | Navigate |
+| `←→` | Switch subscription tab |
+| `?` | Help menu |
+| `q` | Exit |
+
+## Themes
+
+| Name | Description |
+|---|---|
+| Matrix | hack the planet |
+| Ocean | deep and cold |
+| Nebula | lost in space |
+| Ember | burn it down |
+| Sakura | soft but deadly |
+| Sunset | golden hour forever |
+
+Press `C` to cycle through themes. The selected theme is saved to config automatically.
+
+## Configuration
+
+Config is stored at `~/.config/bushuray/config.json` and created automatically on first run.
+
 ```json
 {
   "socks-port": 3090,
   "http-port": 3091,
+  "core-tcp-port": 4897,
   "test-port-range": {
-    "start": 3096,
+    "start": 3095,
     "end": 30120
   },
-  "no-background": false 
+  "no-background": false,
+  "theme": "Matrix"
 }
 ```
-- `socks-port`: Exposed local socks5 port
-- `http-port`: Exposed local http port
-- `test-port-range`: Port range used for profile testing
-- `no-background`: Whether or not tui should have a background. Use this if you want your own terminal background or you have a transparent terminal
 
-### Tun mode
-To use tun mode, connect to a profile then press `v`. Tun mode is experimental at this time but should work. If it doesn't, please create an issue. Running as root raises security concerns for the current version, see [this issue](https://github.com/Keivan-sf/Bushuray-core/issues/10).
-- If you are experiencing DNS issues, try setting 8.8.8.8 as your primary DNS. This issue is being tracked [here](https://github.com/Keivan-sf/Bushuray-core/issues/11)
+| Field | Default | Description |
+|---|---|---|
+| `socks-port` | `3090` | Local SOCKS5 proxy port |
+| `http-port` | `3091` | Local HTTP proxy port |
+| `core-tcp-port` | `4897` | Port used to connect to `bushuray-core` |
+| `test-port-range` | `3095–30120` | Port range used for latency testing |
+| `no-background` | `false` | Disable background color (useful for transparent terminals) |
+| `theme` | `Matrix` | Active theme name |
 
-Thanks to [@navidmafi](https://github.com/navidmafi) for his help with tun mode issues
-### Debugging
-If something is not working as expected, you can examine `debug.log` and `core-debug.log`. For example:
+## Updating Xray
+
+The Xray binary is located at `/opt/bushuray/bin/xray`. To update:
+
+```bash
+# Check latest version
+curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | grep tag_name
+
+# Download and replace (update version number accordingly)
+wget https://github.com/XTLS/Xray-core/releases/download/vX.X.X/Xray-linux-64.zip
+unzip Xray-linux-64.zip
+sudo cp xray /opt/bushuray/bin/xray
+sudo chmod +x /opt/bushuray/bin/xray
 ```
-tail -f core-debug.log
-```
 
+## Debugging
+
+```bash
+tail -f debug.log       # TUI logs
+tail -f core-debug.log  # bushuray-core logs
+```

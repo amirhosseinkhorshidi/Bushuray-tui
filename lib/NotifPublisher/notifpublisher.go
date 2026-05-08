@@ -48,14 +48,6 @@ func SubscriptionUpdatedNotif(data sharedtypes.SubscriptionUpdated) {
 	np.p.Send(data)
 }
 
-func IsRootAnswerNotif(data sharedtypes.IsRootAnswer) {
-	np.p.Send(data)
-}
-
-func TunStatusChangedNotif(data sharedtypes.TunStatus) {
-	np.p.Send(data)
-}
-
 func WarningNotif(data sharedtypes.Warning) {
 	np.p.Send(data)
 }
@@ -64,6 +56,7 @@ func ClearWarningsNotif(data sharedtypes.ClearWarnings) {
 	np.p.Send(data)
 }
 
-func EnterPasteProfileMode(data sharedtypes.PasteProfileViewEnter) {
+func ClearTestResultNotif(data sharedtypes.ClearTestResult) {
 	np.p.Send(data)
 }
+

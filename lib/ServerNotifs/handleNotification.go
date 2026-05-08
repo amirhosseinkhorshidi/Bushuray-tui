@@ -73,20 +73,5 @@ func HandleNotification(msg sharedtypes.TcpMessage) {
 			return
 		}
 		np.SubscriptionUpdatedNotif(data)
-	case "is-root-answer":
-		var data sharedtypes.IsRootAnswer
-		if err := json.Unmarshal(msg.Data, &data); err != nil {
-			log.Printf("Invalid body for is-root-answer %v", err)
-			return
-		}
-		np.IsRootAnswerNotif(data)
-
-	case "tun-status-changed":
-		var data sharedtypes.TunStatus
-		if err := json.Unmarshal(msg.Data, &data); err != nil {
-			log.Printf("Invalid body for tun-status-changed %v", err)
-			return
-		}
-		np.TunStatusChangedNotif(data)
 	}
 }

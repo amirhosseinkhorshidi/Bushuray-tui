@@ -34,14 +34,20 @@ type Model struct {
 var protocol_w = 8
 var test_result_w = 15
 
-var primary_style = lipgloss.NewStyle().Background(lipgloss.Color("#1e2030")).Foreground(lipgloss.Color("#FFF"))
+func primaryStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Background(global.GetTheme().ActiveBg).Foreground(global.GetPrimaryColor()).Bold(true)
+}
+func protocolPrimaryStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Background(global.GetPrimaryColor()).Foreground(lipgloss.Color("#FFF")).Width(protocol_w).Align(lipgloss.Center)
+}
+func underCursorStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Background(global.GetTheme().CursorBg).Foreground(lipgloss.Color("#FFF"))
+}
+func protocolUnderCursorStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Background(global.GetTheme().CursorBg).Foreground(lipgloss.Color("#94a3b8")).Width(protocol_w).Align(lipgloss.Center)
+}
 
-var protocol_primary_style = lipgloss.NewStyle().Background(lipgloss.Color("#8839ef")).Foreground(lipgloss.Color("#FFF")).Width(protocol_w).Align(lipgloss.Center)
-
-var under_cursor_style = lipgloss.NewStyle().Background(lipgloss.Color("#11111b")).Foreground(lipgloss.Color("#FFF"))
-var protocol_under_cursor_style = lipgloss.NewStyle().Background(lipgloss.Color("#24273a")).Foreground(lipgloss.Color("#9ca0b0")).Width(protocol_w).Align(lipgloss.Center)
-
-var protocol_style = lipgloss.NewStyle().Foreground(lipgloss.Color("#4c4f69")).Width(protocol_w).Align(lipgloss.Center)
+var protocol_style = lipgloss.NewStyle().Foreground(lipgloss.Color("#6b7280")).Width(protocol_w).Align(lipgloss.Center)
 var item_style = lipgloss.NewStyle()
 
 func (l Model) GetItemUnderCursor() (ListItem, error) {
@@ -55,12 +61,12 @@ func (l Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "up", "k":
+		case "up":
 			if l.cursor > 0 {
 				l.cursor--
 			}
 			l.adjustOffsetForCursor()
-		case "down", "j":
+		case "down":
 			if l.cursor < len(l.Items)-1 {
 				l.cursor++
 			}
@@ -69,10 +75,6 @@ func (l Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			l.testGroup()
 		case "t":
 			l.testProfile()
-		case "ctrl+v", "p":
-			l.paste()
-		case "y":
-			l.copyProfileUnderCursor()
 		case "delete", "d":
 			l.deleteProfileUnderCursor()
 		case "enter":
@@ -118,13 +120,13 @@ func (l Model) View() string {
 		item := l.Items[i]
 		item_str := fmt.Sprintf(" %s", utils.LimitStrLen(utils.SanitizeString(item.Name), w-2))
 		if i == l.Primary {
-			protocol := protocol_primary_style.Render(item.Protocol)
+			protocol := protocolPrimaryStyle().Render(item.Protocol)
 			row += protocol
-			row += primary_style.Width(w).MaxWidth(w).MaxHeight(1).Render(item_str) + styleTestPrimary(item.TestResult)
+			row += primaryStyle().Width(w).MaxWidth(w).MaxHeight(1).Render(item_str) + styleTestPrimary(item.TestResult)
 		} else if i == l.cursor {
-			protocol := protocol_under_cursor_style.Render(item.Protocol)
+			protocol := protocolUnderCursorStyle().Render(item.Protocol)
 			row += protocol
-			row += under_cursor_style.Width(w).MaxWidth(w).MaxHeight(1).Render(item_str) + styleTestUnderCursor(item.TestResult)
+			row += underCursorStyle().Width(w).MaxWidth(w).MaxHeight(1).Render(item_str) + styleTestUnderCursor(item.TestResult)
 		} else {
 			protocol := protocol_style.Background(global.GetBgColor()).Render(item.Protocol)
 			row += protocol

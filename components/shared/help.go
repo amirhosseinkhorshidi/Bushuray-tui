@@ -6,8 +6,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-var secondary_style = lipgloss.NewStyle().Foreground(lipgloss.Color("#4c4f69"))
-var primary_style = lipgloss.NewStyle().Foreground(lipgloss.Color("#FFFFFF"))
+var secondary_style = lipgloss.NewStyle().Foreground(lipgloss.Color("#6b7280"))
+var primary_style = lipgloss.NewStyle().Foreground(lipgloss.Color("#e2e8f0"))
 
 func GenHelp(keys []string, helps []string) string {
 	separtor := secondary_style.Background(global.GetBgColor()).Render(" • ")

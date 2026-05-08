@@ -8,6 +8,7 @@ import (
 
 	mainmodel "github.com/Keivan-sf/Bushuray-tui/components/MainModel"
 	appconfig "github.com/Keivan-sf/Bushuray-tui/lib/AppConfig"
+	"github.com/Keivan-sf/Bushuray-tui/global"
 	connection "github.com/Keivan-sf/Bushuray-tui/lib/Connection"
 	notif_publisher "github.com/Keivan-sf/Bushuray-tui/lib/NotifPublisher"
 	servercmds "github.com/Keivan-sf/Bushuray-tui/lib/ServerCommands"
@@ -31,6 +32,7 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lmsgprefix)
 
 	appconfig.LoadConfig()
+	global.LoadTheme(appconfig.GetConfig().Theme)
 	port := appconfig.GetConfig().CoreTCPPort
 
 	C := connection.ConnectionHandler{}

@@ -6,49 +6,43 @@ import (
 	"github.com/Keivan-sf/Bushuray-tui/global"
 	servercmds "github.com/Keivan-sf/Bushuray-tui/lib/ServerCommands"
 
-	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
+const manualGroupId = 0
+
 type Model struct {
-	Width          int
-	Height         int
-	focusIndex     int
-	CurrentGroupId int
-	inputs         []textinput.Model
-	cursorMode     cursor.Mode
+	Width      int
+	Height     int
+	input      textinput.Model
+	focusOnBtn bool
+}
+
+var blurredStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#6b7280"))
+
+func focusedStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Foreground(global.GetPrimaryColor())
+}
+
+func placeHolderStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Foreground(lipgloss.Color("#374151"))
 }
 
 func InitialModel() Model {
-	m := Model{
-		inputs: make([]textinput.Model, 1),
-	}
+	t := textinput.New()
+	t.Placeholder = "vmess://... or vless://..."
+	t.Focus()
+	t.TextStyle = focusedStyle().Background(global.GetBgColor())
+	t.PromptStyle = focusedStyle().Background(global.GetBgColor())
+	t.Cursor.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#6b7280")).Background(global.GetBgColor())
+	t.Cursor.TextStyle = focusedStyle().Background(global.GetBgColor())
+	t.PlaceholderStyle = placeHolderStyle().Background(global.GetBgColor())
+	t.Width = 50
+	t.CharLimit = 2000
 
-	var t textinput.Model
-	for i := range m.inputs {
-		t = textinput.New()
-		t.Cursor.Style = cursorStyle.Background(global.GetBgColor())
-		t.CharLimit = 32
-
-		switch i {
-		case 0:
-			t.Placeholder = "Paste profiles here"
-			t.Focus()
-			t.TextStyle = focusedStyle.Background(global.GetBgColor())
-			t.PromptStyle = focusedStyle.Background(global.GetBgColor())
-			t.Cursor.TextStyle = focusedStyle.Background(global.GetBgColor())
-			t.PlaceholderStyle = placeHolderStyle.Background(global.GetBgColor())
-			t.Width = 50
-			t.CharLimit = 40000
-			t.Cursor.Style = cursorStyle.Background(global.GetBgColor())
-		}
-
-		m.inputs[i] = t
-	}
-
-	return m
+	return Model{input: t}
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
@@ -56,81 +50,85 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "esc":
-			commands := make([]tea.Cmd, len(m.inputs))
-			commands = append(commands, cmds.ExitPasteProfileView)
 			m.reset()
-			commands = append(commands, m.adjustToNewFocus(commands)...)
-			return m, tea.Batch(commands...)
-
-		case "tab", "shift+tab", "enter", "up", "down":
-			s := msg.String()
-
-			commands := make([]tea.Cmd, len(m.inputs))
-
-			if s == "enter" && m.focusIndex == len(m.inputs) && m.inputs[0].Value() != "" {
-				servercmds.AddProfiles(m.inputs[0].Value(), m.CurrentGroupId)
-				commands = append(commands, cmds.ExitPasteProfileView)
+			return m, cmds.ExitPasteProfileView
+		case "down":
+			if !m.focusOnBtn {
+				m.focusOnBtn = true
+				m.input.Blur()
+				m.input.PromptStyle = blurredStyle.Background(global.GetBgColor())
+				m.input.TextStyle = blurredStyle.Background(global.GetBgColor())
+				return m, nil
+			}
+		case "up":
+			if m.focusOnBtn {
+				m.focusOnBtn = false
+				m.input.Focus()
+				m.input.PromptStyle = focusedStyle().Background(global.GetBgColor())
+				m.input.TextStyle = focusedStyle().Background(global.GetBgColor())
+				return m, nil
+			}
+		case "enter":
+			uri := m.input.Value()
+			if uri != "" {
+				servercmds.AddProfiles(uri, manualGroupId)
 				m.reset()
-			} else if s == "up" || s == "shift+tab" {
-				m.focusIndex--
-			} else if s == "down" || s == "tab" {
-				m.focusIndex++
+				return m, cmds.SubmitPasteProfileView
 			}
-
-			if m.focusIndex > len(m.inputs) {
-				m.focusIndex = 0
-			} else if m.focusIndex < 0 {
-				m.focusIndex = len(m.inputs)
-			}
-
-			commands = append(commands, m.adjustToNewFocus(commands)...)
-			return m, tea.Batch(commands...)
 		}
 	}
 
-	cmd := m.updateInputs(msg)
-
-	return m, cmd
-}
-
-func (m *Model) updateInputs(msg tea.Msg) tea.Cmd {
-	cmds := make([]tea.Cmd, len(m.inputs))
-
-	for i := range m.inputs {
-		m.inputs[i], cmds[i] = m.inputs[i].Update(msg)
+	if !m.focusOnBtn {
+		var cmd tea.Cmd
+		m.input, cmd = m.input.Update(msg)
+		return m, cmd
 	}
 
-	return tea.Batch(cmds...)
+	return m, nil
+}
+
+func (m *Model) reset() {
+	m.input.Reset()
+	m.focusOnBtn = false
+	m.input.Focus()
+	m.input.PromptStyle = focusedStyle().Background(global.GetBgColor())
+	m.input.TextStyle = focusedStyle().Background(global.GetBgColor())
 }
 
 func (m Model) View() string {
-	bg_style := lipgloss.NewStyle().Background(global.GetBgColor())
-	element_style := bg_style.Width(m.Width).Height(1).Align(lipgloss.Center)
-	var views []string
-	for i := range m.inputs {
-		views = append(views, element_style.Render(m.inputs[i].View()))
+	bg := lipgloss.NewStyle().Background(global.GetBgColor())
+	center := bg.Width(m.Width).Height(1).Align(lipgloss.Center)
+
+	title := lipgloss.NewStyle().
+		Foreground(global.GetPrimaryColor()).
+		Background(global.GetBgColor()).
+		Render("Add Proxy")
+	titleRow := center.Render(title)
+
+	inputRow := center.Render(m.input.View())
+
+	var btnStr string
+	if m.focusOnBtn {
+		btnStr = focusedStyle().Background(global.GetBgColor()).Render("[ Submit ]")
+	} else {
+		btnStr = blurredStyle.Background(global.GetBgColor()).Render("[ Submit ]")
 	}
+	btnRow := bg.Width(m.Width).Height(1).Align(lipgloss.Center).Render(
+		bg.Width(54).Render(btnStr),
+	)
 
-	button := blurredButton()
-	if m.focusIndex == len(m.inputs) {
-		button = focusedButton()
-	}
+	help := shared.GenHelp([]string{"↑↓", "enter", "esc"}, []string{"navigate", "submit", "cancel"})
+	helpRow := center.Render(bg.Width(54).Render(help))
 
-	help_text := shared.GenHelp([]string{"esc"}, []string{"cancel"})
-
-	views = append(views, "")
-	views = append(views, element_style.Render(bg_style.Width(54).Render(button)))
-	views = append(views, "")
-	views = append(views, element_style.Render(bg_style.Width(54).Render(help_text)))
-	vertical_container := bg_style.Render(lipgloss.JoinVertical(lipgloss.Top, views...))
-	content := lipgloss.Place(m.Width, m.Height, lipgloss.Center, lipgloss.Center, vertical_container)
-	container := lipgloss.NewStyle().Background(global.GetBgColor()).Render(content)
-	return container
-
+	views := []string{titleRow, "", inputRow, "", btnRow, "", helpRow}
+	content := lipgloss.JoinVertical(lipgloss.Top, views...)
+	container := bg.Render(content)
+	placed := lipgloss.Place(m.Width, m.Height, lipgloss.Center, lipgloss.Center, container)
+	return lipgloss.NewStyle().Background(global.GetBgColor()).Render(placed)
 }
 
-func (m Model) SetWH(width int, height int) Model {
-	m.Height = height
+func (m Model) SetWH(width, height int) Model {
 	m.Width = width
+	m.Height = height
 	return m
 }

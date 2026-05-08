@@ -7,9 +7,13 @@ import (
 )
 
 func ExitPasteProfileView() tea.Msg {
-	return t.PasteProfileViewExit{}
+	return t.PasteProfileExit{}
 }
 
 func EnterPasteProfileView() tea.Msg {
-	return t.PasteProfileViewEnter{}
+	return t.PasteProfileEnter{}
+}
+
+func SubmitPasteProfileView() tea.Msg {
+	return t.PasteProfileSubmitted{}
 }

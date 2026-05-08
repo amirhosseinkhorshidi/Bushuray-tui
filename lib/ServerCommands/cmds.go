@@ -42,18 +42,6 @@ func UpdateSubscription(gid int) {
 	sendCmd("update-subscription", sharedtypes.UpdateSubscriptionData{GroupId: gid})
 }
 
-func IsRoot() {
-	sendCmd("is-root", sharedtypes.IsRootData{})
-}
-
-func EnableTun() {
-	sendCmd("enable-tun", sharedtypes.EnableTunData{})
-}
-
-func DisableTun() {
-	sendCmd("disable-tun", sharedtypes.DisableTunData{})
-}
-
 func Die() {
 	sendCmd("die", sharedtypes.DieData{})
 }

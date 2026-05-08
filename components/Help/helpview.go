@@ -22,28 +22,17 @@ type Model struct {
 func InitialModel() Model {
 	return Model{
 		keys: []KeyHelp{
-			{Key: "enter", Help: "connect"},
-			{Key: "p/ctrl+v", Help: "paste profile(s)"},
-			{Key: "y", Help: "copy profile"},
-			{Key: "v", Help: "toggle tun mode"},
-			{Key: "a", Help: "add a new group"},
-			{Key: "t", Help: "test profile"},
-			{Key: "T", Help: "test group profiles"},
-			{Key: "U", Help: "update subscription"},
-			{Key: "S", Help: "sort by test result"},
-			{Key: "r", Help: "rename profile"},
-			{Key: "del/d", Help: "delete profile"},
-			{Key: "D", Help: "delete group"},
-			{Key: "k/↑", Help: "move up"},
-			{Key: "j/↓", Help: "move down"},
-			{Key: "J", Help: "jump to active profile"},
-			{Key: "G", Help: "jump to last profile"},
-			{Key: "g", Help: "jump to first profile"},
-			{Key: "tab", Help: "next tab"},
-			{Key: "ctrl+pgdn", Help: "next tab"},
-			{Key: "shift+tab", Help: "previous tab"},
-			{Key: "ctrl+pgup", Help: "previous tab"},
-			{Key: "ctrl+c", Help: "exit"},
+			{Key: "enter", Help: "connect / disconnect"},
+			{Key: "a", Help: "add sub / proxy"},
+			{Key: "t", Help: "test current proxy"},
+			{Key: "T", Help: "test all proxies in this sub"},
+			{Key: "U", Help: "update sub"},
+			{Key: "del/d", Help: "delete proxy"},
+			{Key: "D", Help: "delete sub"},
+			{Key: "C", Help: "change theme"},
+			{Key: "↑↓", Help: "move up / down"},
+			{Key: "←→", Help: "switch tab"},
+			{Key: "q", Help: "exit"},
 			{Key: "?", Help: "help menu"},
 		},
 	}
@@ -71,8 +60,8 @@ func (m Model) SetWH(width int, height int) Model {
 
 }
 
-var secondary_style = lipgloss.NewStyle().Foreground(lipgloss.Color("#4c4f69"))
-var primary_style = lipgloss.NewStyle()
+var secondary_style = lipgloss.NewStyle().Foreground(lipgloss.Color("#6b7280"))
+var primary_style = lipgloss.NewStyle().Foreground(lipgloss.Color("#e2e8f0"))
 
 func (m Model) GenHelpKey(keys []KeyHelp) string {
 	key_max_width := 0

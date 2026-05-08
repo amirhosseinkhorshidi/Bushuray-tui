@@ -1,71 +1,42 @@
 package mainmodel
 
 import (
-	list "github.com/Keivan-sf/Bushuray-tui/components/List"
-	tabs "github.com/Keivan-sf/Bushuray-tui/components/Tabs"
+	profilelist "github.com/Keivan-sf/Bushuray-tui/components/ProfileList"
 	sharedtypes "github.com/Keivan-sf/Bushuray-tui/shared_types"
 
 	tea "github.com/charmbracelet/bubbletea"
-	zone "github.com/lrstanley/bubblezone"
 )
 
 func applyApplicationState(msg sharedtypes.ApplicationState, m Model) (tea.Model, tea.Cmd) {
-	connected_profile_id := -1
-	connected_profile_gid := -1
-	if msg.ConnectionStatus.Connection == "connected" {
-		connected_profile_id = msg.ConnectionStatus.Profile.Id
-		connected_profile_gid = msg.ConnectionStatus.Profile.GroupId
-	}
+	m.ProfileList.IsConnected = msg.ConnectionStatus.Connection == "connected"
 
-	m.Tabs.IsConnected = msg.ConnectionStatus.Connection == "connected"
-	if msg.TunStatus {
-		m.Tabs.TunStatus = "connected"
-	} else {
-		m.Tabs.TunStatus = "disconnected"
+	var groups []profilelist.GroupItem
+	for _, gwp := range msg.Groups {
+		groups = append(groups, profilelist.GroupItem{
+			Id:   gwp.Group.Id,
+			Name: gwp.Group.Name,
+		})
 	}
-	var views []tabs.TabView
-	for _, group := range msg.Groups {
-		var tabview tabs.TabView
-		tabview.Content = list.Model{}
-		tabview.Content.Primary = -1
-		tabview.Content.Items = []list.ListItem{}
-		tabview.Content.Id = zone.NewPrefix()
-		tabview.Content.GroupId = group.Group.Id
-		tabview.Title = group.Group.Name
-		for i, profile := range group.Profiles {
-			if connected_profile_gid == profile.GroupId && connected_profile_id == profile.Id {
-				tabview.Content.Primary = i
-			}
-			child := list.ListItem{
-				Name:       profile.Name,
-				ProfileId:  profile.Id,
-				Protocol:   convertProtocolForDisplay(profile.Protocol),
-				TestResult: profile.TestResult,
-				Uri:        profile.Uri,
-			}
-			tabview.Content.Items = append(tabview.Content.Items, child)
+	m.ProfileList.Groups = groups
+
+	var items []profilelist.ProfileItem
+	for _, gwp := range msg.Groups {
+		for _, profile := range gwp.Profiles {
+			item := makeProfileItem(profile)
+			item.TestResult = 0
+			items = append(items, item)
 		}
-		views = append(views, tabview)
 	}
-	m.Tabs.Children = views
-	m.Tabs = m.Tabs.SetWH(m.Tabs.Width, m.Tabs.Height)
+	m.ProfileList.Items = items
 
-	m.Tabs.JumpToConnectedProfile()
+	m.ProfileList.PrimaryId = -1
+	m.ProfileList.PrimaryGroupId = -1
+	if m.ProfileList.IsConnected {
+		m.ProfileList.PrimaryId = msg.ConnectionStatus.Profile.Id
+		m.ProfileList.PrimaryGroupId = msg.ConnectionStatus.Profile.GroupId
+	}
+
+	m.ProfileList = m.ProfileList.SetWH(m.Width, m.Height)
+	m.ProfileList.JumpToPrimary()
 	return m, nil
-}
-
-func convertProtocolForDisplay(name string) string {
-	switch name {
-	case "vless":
-		return "V-LESS"
-	case "vmess":
-		return "V-MESS"
-	case "socks":
-		return "SOCKS5"
-	case "shadowsocks":
-		return "SHADOW"
-	case "trojan":
-		return "TROJAN"
-	}
-	return name
 }

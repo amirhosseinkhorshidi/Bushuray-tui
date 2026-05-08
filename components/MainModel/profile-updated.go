@@ -1,22 +1,27 @@
 package mainmodel
 
 import (
-	list "github.com/Keivan-sf/Bushuray-tui/components/List"
+	"time"
+
+	notif_publisher "github.com/Keivan-sf/Bushuray-tui/lib/NotifPublisher"
 	sharedtypes "github.com/Keivan-sf/Bushuray-tui/shared_types"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func applyProfileUpdated(msg sharedtypes.ProfileUpdated, m Model) (tea.Model, tea.Cmd) {
-	i, j := findProfile(msg.Profile.GroupId, msg.Profile.Id, m)
-	if i != -1 && j != -1 {
-		m.Tabs.Children[i].Content.Items[j] = list.ListItem{
-			ProfileId:  msg.Profile.Id,
-			Name:       msg.Profile.Name,
-			Protocol:   convertProtocolForDisplay(msg.Profile.Protocol),
-			TestResult: msg.Profile.TestResult,
-			Uri:        msg.Profile.Uri,
+	idx := findProfile(msg.Profile.GroupId, msg.Profile.Id, m)
+	if idx != -1 {
+		newItem := makeProfileItem(msg.Profile)
+		if newItem.TestResult > 0 || newItem.TestResult == -1 {
+			newItem.TestResultTime = time.Now()
+			gid, pid := newItem.GroupId, newItem.ProfileId
+			go func() {
+				time.Sleep(10 * time.Second)
+				notif_publisher.ClearTestResultNotif(sharedtypes.ClearTestResult{GroupId: gid, ProfileId: pid})
+			}()
 		}
+		m.ProfileList.Items[idx] = newItem
 	}
 	return m, nil
 }

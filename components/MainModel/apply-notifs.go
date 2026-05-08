@@ -1,7 +1,9 @@
 package mainmodel
 
 import (
+	profilelist "github.com/Keivan-sf/Bushuray-tui/components/ProfileList"
 	sharedtypes "github.com/Keivan-sf/Bushuray-tui/shared_types"
+	"github.com/Keivan-sf/Bushuray-tui/utils"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -26,32 +28,46 @@ func HandleServerNotifs(msg sharedtypes.ServerNotification, m Model) (tea.Model,
 		return applyGroupDeleted(msg, m)
 	case sharedtypes.SubscriptionUpdated:
 		return applySubscriptionUpdated(msg, m)
-	case sharedtypes.IsRootAnswer:
-		return applyIsRootAnswer(msg, m)
-	case sharedtypes.TunStatus:
-		return applyTunStatusChanged(msg, m)
 	}
 	return m, nil
 }
 
-func findProfile(gid int, id int, m Model) (tabid int, index int) {
-	for i, g := range m.Tabs.Children {
-		if g.Content.GroupId == gid {
-			for j, p := range g.Content.Items {
-				if p.ProfileId == id {
-					return i, j
-				}
-			}
-		}
-	}
-	return -1, -1
-}
-
-func findGroupTab(gid int, m Model) (tabid int) {
-	for i, g := range m.Tabs.Children {
-		if g.Content.GroupId == gid {
+func findProfile(gid int, id int, m Model) int {
+	for i, item := range m.ProfileList.Items {
+		if item.GroupId == gid && item.ProfileId == id {
 			return i
 		}
 	}
 	return -1
+}
+
+func convertProtocolForDisplay(name string) string {
+	switch name {
+	case "vless":
+		return "V-LESS"
+	case "vmess":
+		return "V-MESS"
+	case "socks":
+		return "SOCKS5"
+	case "shadowsocks":
+		return "SHADOW"
+	case "trojan":
+		return "TROJAN"
+	}
+	return name
+}
+
+func makeProfileItem(p sharedtypes.Profile) profilelist.ProfileItem {
+	address, port, transport := utils.ParseURIInfo(p.Uri)
+	return profilelist.ProfileItem{
+		ProfileId:  p.Id,
+		GroupId:    p.GroupId,
+		Name:       p.Name,
+		Protocol:   convertProtocolForDisplay(p.Protocol),
+		TestResult: p.TestResult,
+		Uri:        p.Uri,
+		Address:    address,
+		Port:       port,
+		Transport:  transport,
+	}
 }

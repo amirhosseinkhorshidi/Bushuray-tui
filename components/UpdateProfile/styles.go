@@ -7,20 +7,27 @@ import (
 )
 
 var (
-	placeHolderStyle    = lipgloss.NewStyle().Foreground(lipgloss.Color("#313244"))
-	focusedStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#7287fd"))
-	blurredStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#8caaee"))
-	cursorStyle         = focusedStyle
+	blurredStyle        = lipgloss.NewStyle().Foreground(lipgloss.Color("#94a3b8"))
 	noStyle             = lipgloss.NewStyle()
-	grayStyle           = lipgloss.NewStyle().Foreground(lipgloss.Color("#585b70"))
+	grayStyle           = lipgloss.NewStyle().Foreground(lipgloss.Color("#6b7280"))
 	helpStyle           = blurredStyle
 	cursorModeHelpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("244"))
-
-	// blurredButton = fmt.Sprintf("[ %s ]", blurredStyle.Render("Submit"))
 )
 
+func placeHolderStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Foreground(lipgloss.Color("#374151"))
+}
+
+func focusedStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Foreground(global.GetPrimaryColor())
+}
+
+func cursorStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Foreground(lipgloss.Color("#6b7280"))
+}
+
 func focusedButton() string {
-	return focusedStyle.Background(global.GetBgColor()).Render("[ Submit ]")
+	return focusedStyle().Background(global.GetBgColor()).Render("[ Submit ]")
 }
 
 func blurredButton() string {

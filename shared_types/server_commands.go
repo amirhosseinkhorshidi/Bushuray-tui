@@ -34,12 +34,7 @@ type UpdateSubscriptionData struct {
 	GroupId int `json:"group_id"`
 }
 
-type IsRootData struct{}
-
 type DieData struct{}
-
-type DisableTunData struct{}
-type EnableTunData struct{}
 
 type UpdateProfileData struct {
 	Profile ProfileID
