@@ -6,11 +6,18 @@ A keyboard-driven Xray proxy client for the terminal. Built with [bubbletea](htt
 
 ## Installation
 
-Download the latest release from the [releases page](https://github.com/Keivan-sf/Bushuray-tui/releases), then copy both binaries:
+Download and extract the latest release from the [releases page](https://github.com/Keivan-sf/Bushuray-tui/releases), then move the folder to `/opt`:
 
 ```bash
-sudo cp bushuray /usr/local/bin/bushuray
-sudo cp bushuray-core /usr/local/bin/bushuray-core
+unzip bushuray-*.zip
+sudo mv bushuray /opt/bushuray
+```
+
+Add `/opt/bushuray` to your PATH in `~/.zshrc`:
+
+```bash
+echo 'export PATH="/opt/bushuray:$PATH"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
 Then run from anywhere:
@@ -19,12 +26,14 @@ Then run from anywhere:
 bushuray
 ```
 
-`bushuray-core` is looked up in the following paths (in order):
+`bushuray-core` is looked up in the following order:
 
-1. `./bushuray-core`
-2. `./bin/bushuray-core`
-3. `/usr/bin/bushuray-core`
-4. `/usr/local/bin/bushuray-core`
+1. `$PATH` (system path)
+2. Same directory as the `bushuray` executable (`/opt/bushuray/`)
+3. `./bushuray-core`
+4. `./bin/bushuray-core`
+5. `/usr/bin/bushuray-core`
+6. `/usr/local/bin/bushuray-core`
 
 ## Keybindings
 
@@ -101,6 +110,6 @@ sudo chmod +x /opt/bushuray/bin/xray
 ## Debugging
 
 ```bash
-tail -f debug.log       # TUI logs
-tail -f core-debug.log  # bushuray-core logs
+tail -f /tmp/bushuray-debug.log       # TUI logs
+tail -f /tmp/bushuray-core-debug.log  # bushuray-core logs
 ```

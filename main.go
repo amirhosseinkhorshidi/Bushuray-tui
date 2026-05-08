@@ -22,7 +22,7 @@ import (
 
 func main() {
 	log.SetOutput(&lumberjack.Logger{
-		Filename:   "debug.log",
+		Filename:   os.TempDir() + "/bushuray-debug.log",
 		MaxSize:    20,
 		MaxBackups: 1,
 		MaxAge:     0,
