@@ -2,11 +2,11 @@
 
 ![screenshot](./images/screenshot.png)
 
-A keyboard-driven Xray proxy client for the terminal. Built with [bubbletea](https://github.com/charmbracelet/bubbletea) and powered by [Bushuray-core](https://github.com/Keivan-sf/Bushuray-core).
+A keyboard-driven Xray proxy client for the terminal. Built with [bubbletea](https://github.com/charmbracelet/bubbletea) and powered by [Bushuray-core](https://github.com/amirhosseinkhorshidi/Bushuray-core).
 
 ## Installation
 
-Download and extract the latest release from the [releases page](https://github.com/Keivan-sf/Bushuray-tui/releases), then move the folder to `/opt`:
+Download and extract the latest release from the [releases page](https://github.com/amirhosseinkhorshidi/Bushuray-tui/releases), then move the folder to `/opt`:
 
 ```bash
 unzip *.zip
