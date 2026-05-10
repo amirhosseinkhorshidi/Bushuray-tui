@@ -13,17 +13,31 @@ unzip *.zip
 sudo mv bushuray /opt/bushuray
 ```
 
-Add `/opt/bushuray` to your PATH in `~/.zshrc`:
+**zsh** — add to PATH in `~/.zshrc`:
 
 ```bash
 echo 'export PATH="/opt/bushuray:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
+**bash** — add to PATH in `~/.bashrc`:
+
+```bash
+echo 'export PATH="/opt/bushuray:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
 Then run from anywhere:
 
 ```bash
 bushuray
+```
+
+If you prefer not to modify your shell config, you can run the binary directly — but you **must** be inside the `/opt/bushuray` directory first:
+
+```bash
+cd /opt/bushuray
+./bushuray
 ```
 
 `bushuray-core` is looked up in the following order:
@@ -49,8 +63,8 @@ bushuray
 | `C` | Change theme |
 | `↑↓` | Navigate |
 | `←→` | Switch subscription tab |
-| `?` | Help menu |
 | `q` | Exit |
+| `?` | Help menu |
 
 ## Themes
 
