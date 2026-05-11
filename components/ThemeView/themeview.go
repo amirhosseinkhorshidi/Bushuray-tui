@@ -51,7 +51,12 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			global.SetTheme(chosen)
 			go appconfig.SaveTheme(chosen)
 			return m, cmds.ExitThemeView
-		case "esc", "q", "C":
+		case "c":
+			newVal := !appconfig.GetConfig().NoBackground
+			appconfig.SetNoBackground(newVal)
+			go appconfig.SaveNoBackground(newVal)
+			return m, nil
+		case "esc", "q":
 			return m, cmds.ExitThemeView
 		}
 	}
@@ -117,7 +122,22 @@ func (m Model) View() string {
 	}
 
 	views = append(views, fullRow.Render(""))
-	help := shared.GenHelp([]string{"↑↓", "enter", "esc"}, []string{"navigate", "select", "cancel"})
+
+	noBg := appconfig.GetConfig().NoBackground
+	noBgCheck := bgStyle.Width(2).Render(" ")
+	if noBg {
+		noBgCheck = lipgloss.NewStyle().Foreground(global.GetPrimaryColor()).Background(bg).Width(2).Render("✓")
+	}
+	noBgState := "false"
+	if noBg {
+		noBgState = "true"
+	}
+	noBgLabel := lipgloss.NewStyle().Foreground(lipgloss.Color("#6b7280")).Background(bg).Render("No Background  [" + noBgState + "]")
+	noBgRow := lipgloss.JoinHorizontal(lipgloss.Top, noBgCheck, noBgLabel)
+	views = append(views, fullRow.Render(noBgRow))
+
+	views = append(views, fullRow.Render(""))
+	help := shared.GenHelp([]string{"↑↓", "enter", "c", "esc"}, []string{"navigate", "select", "toggle bg", "cancel"})
 	views = append(views, fullRow.Render(help))
 
 	content := lipgloss.JoinVertical(lipgloss.Top, views...)

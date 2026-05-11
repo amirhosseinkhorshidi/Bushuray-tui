@@ -57,6 +57,23 @@ func LoadConfig() {
 	is_config_loaded = true
 }
 
+func SetNoBackground(val bool) {
+	application_configuration.NoBackground = val
+}
+
+func SaveNoBackground(val bool) error {
+	home_dir, err := utils.GetHomeDir()
+	if err != nil {
+		return err
+	}
+	config_path := filepath.Join(home_dir, ".config", "bushuray", "config.json")
+	data, err := json.MarshalIndent(application_configuration, "", " ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(config_path, data, 0666)
+}
+
 func SaveTheme(themeName string) error {
 	application_configuration.Theme = themeName
 	home_dir, err := utils.GetHomeDir()
