@@ -70,12 +70,19 @@ cd /opt/bushuray
 
 | Name | Description |
 |---|---|
-| Matrix | hack the planet |
-| Ocean | deep and cold |
-| Nebula | lost in space |
 | Ember | burn it down |
-| Sakura | soft but deadly |
+| Wine | pour me another |
+| Copper | forge and fire |
 | Sunset | golden hour forever |
+| Neon | too bright to ignore |
+| Matrix | hack the planet |
+| Teal | calm runs deep |
+| Cyan | electric ice |
+| Ocean | deep and cold |
+| Indigo | between worlds |
+| Nebula | lost in space |
+| Sakura | soft but deadly |
+| Silver | cold steel |
 
 Press `C` to cycle through themes. The selected theme is saved to config automatically.
 
