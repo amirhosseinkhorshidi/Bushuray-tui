@@ -33,7 +33,7 @@ Then run from anywhere:
 bushuray
 ```
 
-If you prefer not to modify your shell config, you can run the binary directly — but you **must** be inside the `/opt/bushuray` directory first:
+To run without modifying your shell config, you need to be inside `/opt/bushuray` first:
 
 ```bash
 cd /opt/bushuray
@@ -84,7 +84,13 @@ cd /opt/bushuray
 | Sakura | soft but deadly |
 | Silver | cold steel |
 
-Press `C` to cycle through themes. The selected theme is saved to config automatically.
+Press `C` to open the theme picker. Use `↑↓` to navigate, `enter` to select.
+
+## No Background
+
+Removes the dark background fill. Useful if your terminal is transparent or has its own background color.
+
+Open the theme picker (`C`), press `c` to toggle.
 
 ## Configuration
 
